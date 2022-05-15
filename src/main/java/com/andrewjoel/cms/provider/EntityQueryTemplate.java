@@ -1,6 +1,8 @@
 package com.andrewjoel.cms.provider;
 
 import com.andrewjoel.cms.models.hbm.HbmEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class EntityQueryTemplate {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntityQueryTemplate.class);
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -18,19 +22,17 @@ public class EntityQueryTemplate {
         final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("INSERT INTO ").append(model.getModelName()).append(" ");
 
-//        final Map<String, Object> filteredValues = model.getAttributes();
-        // EntityUtils.excludePrimaryKey(model, values);
-        final String queryFields = String.join(",", model.getAttributes().keySet());
-        final String queryValues = model.getAttributes().keySet().stream().map(o -> ":" + o)
+        final String queryFields = String.join(",", model.getAttributesWithoutPrimaryKey().keySet());
+        final String queryValues = model.getAttributesWithoutPrimaryKey().keySet().stream().map(field -> ":" + field)
                 .collect(Collectors.joining(","));
 
         queryBuilder.append("(").append(queryFields).append(") ")
                 .append("VALUES (").append(queryValues).append(")");
 
-        System.out.println(queryBuilder);
+        LOGGER.debug("Generated insert query: {}", queryBuilder);
 
         final Query query = entityManager.createNativeQuery(queryBuilder.toString());
-        model.getAttributes().keySet().forEach(key ->
+        model.getAttributesWithoutPrimaryKey().keySet().forEach(key ->
                 query.setParameter(key, values.get(key))
         );
 

@@ -5,10 +5,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HbmEntity implements Serializable {
+    private static final long serialVersionUID = 4191846739415586131L;
+
     private String className;
     private Map<String, HbmProperty> attributes;
     private String primaryKey;
-
     private String modelName;
 
     public String getModelName() {

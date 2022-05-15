@@ -3,9 +3,15 @@ package com.andrewjoel.cms.models.hbm;
 import java.io.Serializable;
 
 public class HbmProperty implements Serializable {
-    private String name;
+    private static final long serialVersionUID = 4692491695953506544L;
 
+    private String name;
     private HbmPropertyType type;
+    private boolean isNullable;
+
+    public HbmProperty() {
+        this.isNullable = true;
+    }
 
     public String getName() {
         return name;
@@ -21,5 +27,13 @@ public class HbmProperty implements Serializable {
 
     public void setType(final HbmPropertyType type) {
         this.type = type;
+    }
+
+    public boolean isNullable() {
+        return isNullable;
+    }
+
+    public void setNullable(final boolean isNullable) {
+        this.isNullable = isNullable;
     }
 }
